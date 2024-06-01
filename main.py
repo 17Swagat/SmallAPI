@@ -1,9 +1,11 @@
 from fastapi import Body, FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
 
-# first "path" match gets selected
-# Hence ordering is important
+class Post(BaseModel):
+    title: str
+    content: str
 
 @app.get('/')
 def root():
@@ -17,8 +19,10 @@ def get_user():
 def get_post():
     return {'data': 'this is your post'}
 
-@app.post('/createposts')
-def create_posts(payload: dict = Body(...)):
-    # print(payload)
-    # return {'message': 'sucessfully created post'}
-    return {'post': payload, 'title': payload['title'], 'content': payload['content']}
+# @app.post('/createposts')
+# def create_posts(payload: dict = Body(...)):
+#     return {'post': payload, 'title': payload['title'], 'content': payload['content']}
+
+@app.post('/posts/create')
+def create_posts(post:Post):
+    return {'titlex': post.title, 'contentx': post.content}
