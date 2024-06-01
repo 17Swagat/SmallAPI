@@ -2,6 +2,6 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get('/')
-def root():
+@app.get('/login')
+def get_user():
     return {'message': 'Hello world'}
