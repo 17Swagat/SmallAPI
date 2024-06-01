@@ -16,3 +16,7 @@ def get_user():
 @app.get('/posts')
 def get_post():
     return {'data': 'this is your post'}
+
+@app.post('/createposts')
+def create_posts():
+    return {'message': 'sucessfully created post'}
