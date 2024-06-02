@@ -21,6 +21,10 @@ def root():
 def get_post():
     return {'data': my_posts}
 
+@app.get('/posts/{id}')
+def get_post(id):
+    return {'id':id}
+
 @app.post('/posts')
 def create_posts(post: Post):
     # saving into array
@@ -28,8 +32,3 @@ def create_posts(post: Post):
     post_dict['id'] = randrange(0, 1000000)
     my_posts.append(post_dict)
     return {'post': post_dict}
-
-# @app.post('/posts/create')
-# def create_posts(post:Post):
-#     return {'titlex': post.title, 'contentx': post.content, 'publishedx': post.published,\
-#             'rating':post.rating, 'pydentaic': post.model_dump(), 'post': post, 'type(post)': str(type(post))}
