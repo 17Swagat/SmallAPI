@@ -8,7 +8,7 @@ class Post(BaseModel):
     title: str
     content: str 
     published: bool = False
-    rating: Optional[int] = None
+    rating: Optional[int] = 15
 
 @app.get('/')
 def root():
