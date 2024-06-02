@@ -24,7 +24,7 @@ def get_post():
 @app.get('/posts/{id}')
 def get_post(id):
     '''Getting a specific post'''
-    return {'type(id)': str(type(id))}
+    id = int(id)
     for post in my_posts:
         if post['id'] == id:
             return {'post': post}
