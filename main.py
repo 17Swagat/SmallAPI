@@ -58,4 +58,4 @@ def delete_post(id: int):
         # id-matched!!
         if post['id'] == id:
             my_posts.pop(index)
-            return {'Id: Deleted Post': id}
+            return Response(status_code=status.HTTP_204_NO_CONTENT)
