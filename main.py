@@ -1,4 +1,4 @@
-from fastapi import Body, FastAPI
+from fastapi import Body, FastAPI, Response
 from pydantic import BaseModel
 from typing import Optional
 from random import randrange
@@ -29,18 +29,13 @@ def get_post():
     return {"data": my_posts}
 
 
-@app.get("/posts/latest")
-def latest_posts():
-    posts = my_posts[: (len(my_posts) - 1)]
-    return {"latest": posts}
-
-
 @app.get("/posts/{id}")
-def get_post(id: int):
+def get_post(id: int, response: Response):
     """Getting a specific post"""
     for post in my_posts:
         if post["id"] == id:
             return {"post": post}
+    response.status_code = 404
     return {"message": "post not found"}
 
 
