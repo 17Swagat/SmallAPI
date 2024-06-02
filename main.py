@@ -30,16 +30,13 @@ def get_post():
 
 
 @app.get("/posts/{id}")
-def get_post(id: int, response: Response):
+def get_post(id: int):
     """Getting a specific post"""
     for post in my_posts:
-        # post-found
+        # post-found:
         if post["id"] == id:
             return {"post": post}
-    # No post found
-    # response.status_code = status.HTTP_404_NOT_FOUND
-    # return {"message": "post not found"}
-    # alt:
+    # post-not-found:
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                         detail=f'post not found with id:{id}')
 
