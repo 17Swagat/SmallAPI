@@ -29,6 +29,7 @@ def get_post():
     return {"data": my_posts}
 
 
+
 @app.get("/posts/{id}")
 def get_post(id: int):
     """Getting a specific post"""
@@ -40,7 +41,6 @@ def get_post(id: int):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                         detail=f'post not found with id:{id}')
 
-
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: Post):
     # saving into array
@@ -49,3 +49,13 @@ def create_posts(post: Post):
     my_posts.append(post_dict)
     # returning response
     return {"post": post_dict}
+
+
+@app.delete('/posts/delete/{id}')
+def delete_post(id: int):
+    # deleting post
+    for index, post in enumerate(my_posts):
+        # id-matched!!
+        if post['id'] == id:
+            my_posts.pop(index)
+            return {'Id: Deleted Post': id}
