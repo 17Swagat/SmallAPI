@@ -22,9 +22,8 @@ def get_post():
     return {'data': my_posts}
 
 @app.get('/posts/{id}')
-def get_post(id):
+def get_post(id: int):
     '''Getting a specific post'''
-    id = int(id)
     for post in my_posts:
         if post['id'] == id:
             return {'post': post}
