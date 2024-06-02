@@ -41,10 +41,11 @@ def get_post(id: int):
                         detail=f'post not found with id:{id}')
 
 
-@app.post("/posts")
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: Post):
     # saving into array
     post_dict = post.model_dump()
     post_dict["id"] = randrange(0, 1000000)
     my_posts.append(post_dict)
+    # returning response
     return {"post": post_dict}
