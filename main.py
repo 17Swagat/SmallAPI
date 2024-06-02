@@ -51,7 +51,7 @@ def create_posts(post: Post):
     return {"post": post_dict}
 
 
-@app.delete('/posts/delete/{id}')
+@app.delete('/posts/delete/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
     # deleting post
     for index, post in enumerate(my_posts):
