@@ -23,7 +23,13 @@ def get_post():
 
 @app.get('/posts/{id}')
 def get_post(id):
-    return {'id':id}
+    '''Getting a specific post'''
+    return {'type(id)': str(type(id))}
+    for post in my_posts:
+        if post['id'] == id:
+            return {'post': post}
+    return {'message': 'post not found'}
+
 
 @app.post('/posts')
 def create_posts(post: Post):
