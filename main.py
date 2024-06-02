@@ -25,4 +25,4 @@ def get_post():
 @app.post('/posts/create')
 def create_posts(post:Post):
     return {'titlex': post.title, 'contentx': post.content, 'publishedx': post.published,\
-            'rating':post.rating}
+            'rating':post.rating, 'pydentaic': post.model_dump()}
