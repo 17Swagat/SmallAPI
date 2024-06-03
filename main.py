@@ -61,4 +61,12 @@ def delete_post(id: int):
             return Response(status_code=status.HTTP_204_NO_CONTENT)
     # Can't Find Element To Delete
     # of given: id
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Element not found= id:{id}')
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Post not found= id:{id}')
+
+
+@app.put('/posts/update/{id}')
+def update_post(id: int, post: Post):
+    print()
+    print(post)
+    print()
+    return {'message': 'updated post'}
