@@ -64,9 +64,25 @@ def delete_post(id: int):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Post not found= id:{id}')
 
 
+# ERROR:
+# 'becoz of `post`'
+# @app.put('/posts/update/{id}')
+# def update_post(id: int, post: Post):
+#     for index, post in enumerate(my_posts):
+#         if post['id'] == id:
+#             my_posts[index]['title'] = post.title
+#             return {'all-post': my_posts}
+#     return {'message': 'post not found'}
+
+# Works!! (Copilot):
+# solved it via changing `post` -> `updated_post`
 @app.put('/posts/update/{id}')
-def update_post(id: int, post: Post):
-    print()
-    print(post)
-    print()
-    return {'message': 'updated post'}
+def update_post(id: int, updated_post: Post):
+    for index, post in enumerate(my_posts):
+        if post['id'] == id:
+            my_posts[index]['title'] = updated_post.title
+            my_posts[index]['content'] = updated_post.content
+            my_posts[index]['published'] = updated_post.published
+            my_posts[index]['rating'] = updated_post.rating
+            return {'message': 'Post updated successfully', 'post': my_posts[index]}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Post not found with id: {id}')
