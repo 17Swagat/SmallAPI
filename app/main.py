@@ -16,9 +16,6 @@ class Post(BaseModel):
     published: bool = False
     rating: Optional[int] = 15
 
-# Till we are not connnected to the Database
-# The Loop will keep on re-running till it gets
-# the connection:
 while True:
     try:
         connnection = psycopg2.connect(host='localhost', 
@@ -47,7 +44,9 @@ def root():
 
 @app.get("/posts")
 def get_post():
-    return {"data": my_posts}
+    cursor.execute(query='''SELECT * from posts''')
+    posts = cursor.fetchall()
+    return {"data": posts}
 
 
 
