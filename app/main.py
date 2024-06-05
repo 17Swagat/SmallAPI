@@ -5,6 +5,7 @@ from random import randrange
 # PostgreSQL DB adapter
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import time
 
 app = FastAPI()
 
@@ -15,21 +16,23 @@ class Post(BaseModel):
     published: bool = False
     rating: Optional[int] = 15
 
-# CONNECTING TO A DATABASE:
-try:
-    # Connect to an existing database
-    connnection = psycopg2.connect(host='localhost', 
-                                   dbname='api_dev', 
-                                   user='postgres',
-                                   password='helloPostgresql',
-                                   cursor_factory=RealDictCursor) # to also get 'col-names' along with rows.
-    # Open a cursor to perform database operations
-    cursor = connnection.cursor()
-    print('\nDatabase connection successfull!!\n')
-
-except Exception as error:
-    print('\nDatabase connnection failed')
-    print(f'Error: {error}\n')
+# Till we are not connnected to the Database
+# The Loop will keep on re-running till it gets
+# the connection:
+while True:
+    try:
+        connnection = psycopg2.connect(host='localhost', 
+                                    dbname='api_dev', 
+                                    user='postgres',
+                                    password='helloPostgresql',
+                                    cursor_factory=RealDictCursor) # to also get 'col-names' along with rows.
+        cursor = connnection.cursor()
+        print('\nDatabase connection successfull!!\n')
+        break
+    except Exception as error:
+        print('\nDatabase connnection failed')
+        print(f'Error: {error}\n')
+        time.sleep(3)
 
 my_posts = [
     {"title": "title post 1", "content": "content post 1", "id": 1},
