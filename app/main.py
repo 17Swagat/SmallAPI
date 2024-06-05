@@ -48,14 +48,19 @@ def get_post():
     posts = cursor.fetchall()
     return {"data": posts}
 
+
+@app.get("/posts/{id}")
+def get_post(id: int):
+    cursor.execute(query='''SELECT * from posts where id = %s''', vars=(id,))
+    post = cursor.fetchone()
+    if post is None: # post not found
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                      detail=f'Post with Id: {id} not found!!')
+    return {'post': post}
+
+
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: Post):
-    # ❌ AVOID: hardcoding:
-    # cursor.execute(
-    #     # query=f'''insert into posts(title, content, published) values ({post.title, post.content, post.published})''')
-    
-    # ✅ BETTER & SAFER way: 
-    # This method uses parameterized queries
     cursor.execute(
         query='''insert into posts(title, content, published) values (%s, %s, %s) returning *''',
         vars=(post.title, post.content, post.published)
@@ -65,16 +70,7 @@ def create_posts(post: Post):
     return {"post":newpost}
 
 
-@app.get("/posts/{id}")
-def get_post(id: int):
-    """Getting a specific post"""
-    for post in my_posts:
-        # post-found:
-        if post["id"] == id:
-            return {"post": post}
-    # post-not-found:
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
-                        detail=f'post not found with id:{id}')
+
 
 
 
