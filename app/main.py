@@ -48,6 +48,20 @@ def get_post():
     posts = cursor.fetchall()
     return {"data": posts}
 
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
+def create_posts(post: Post):
+    # ❌ AVOID: hardcoding:
+    # cursor.execute(
+    #     # query=f'''insert into posts(title, content, published) values ({post.title, post.content, post.published})''')
+    
+    # ✅ BETTER & SAFER way: 
+    # This method uses parameterized queries
+    cursor.execute(
+        query='''insert into posts(title, content, published) values (%s, %s, %s)''',
+        vars=(post.title, post.content, post.published)
+    )
+
+    return {"post":''}
 
 
 @app.get("/posts/{id}")
@@ -61,14 +75,7 @@ def get_post(id: int):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                         detail=f'post not found with id:{id}')
 
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post):
-    # saving into array
-    post_dict = post.model_dump()
-    post_dict["id"] = randrange(0, 1000000)
-    my_posts.append(post_dict)
-    # returning response
-    return {"post": post_dict}
+
 
 
 @app.delete('/posts/delete/{id}', status_code=status.HTTP_204_NO_CONTENT)
