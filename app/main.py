@@ -57,11 +57,12 @@ def create_posts(post: Post):
     # ✅ BETTER & SAFER way: 
     # This method uses parameterized queries
     cursor.execute(
-        query='''insert into posts(title, content, published) values (%s, %s, %s)''',
+        query='''insert into posts(title, content, published) values (%s, %s, %s) returning *''',
         vars=(post.title, post.content, post.published)
     )
-
-    return {"post":''}
+    newpost = cursor.fetchone()
+    connnection.commit()
+    return {"post":newpost}
 
 
 @app.get("/posts/{id}")
