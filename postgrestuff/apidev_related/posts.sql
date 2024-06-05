@@ -1,5 +1,7 @@
 select * from posts;
 
+select * from posts order by id;
+
 INSERT INTO posts (title, content, published, created_at) 
 VALUES 
     ('First Post', 'This is the content of the first post.', true, '2024-06-01 10:00:00+00'),
