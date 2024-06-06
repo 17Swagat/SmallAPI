@@ -41,7 +41,7 @@ class Post(BaseModel):
     title: str
     content: str
     published: bool = False
-    rating: Optional[int] = 15
+    # rating: Optional[int] = 15
 
 
 @app.get("/")
@@ -63,6 +63,24 @@ def get_post(db: Session = Depends(get_db)):
     # posts = cursor.fetchall()
     posts = db.query(models.Post).all()
     return {"posts": posts}
+
+
+@app.post("/posts", status_code=status.HTTP_201_CREATED)
+def create_posts(post: Post, db: Session = Depends(get_db)):
+    # cursor.execute(
+    #     query="""insert into posts(title, content, published) values (%s, %s, %s) returning *""",
+    #     vars=(post.title, post.content, post.published),
+    # )
+    # newpost = cursor.fetchone()
+    # connnection.commit()
+    # return {"post": newpost}
+
+    # Using ORM:
+    newpost = models.Post(**post.model_dump())
+    db.add(newpost)
+    db.commit()
+    db.refresh(newpost)  # retrieving the newly created post
+    return {"post": newpost}
 
 
 @app.get("/posts/{id}")
@@ -89,26 +107,6 @@ def delete_post(id: int):
     # if post available:
     cursor.execute(query=""" delete from posts where id = %s returning *""", vars=(id,))
     deleted_post = cursor.fetchone()
-
-
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post, db: Session = Depends(get_db)):
-    # cursor.execute(
-    #     query="""insert into posts(title, content, published) values (%s, %s, %s) returning *""",
-    #     vars=(post.title, post.content, post.published),
-    # )
-    # newpost = cursor.fetchone()
-    # connnection.commit()
-    # return {"post": newpost}
-    # Using ORM:
-    # db.query(models.Post).add
-    newpost = models.Post(
-        title=post.title, content=post.content, published=post.published
-    )
-    db.add(newpost)
-    db.commit()
-    db.refresh(newpost) # retrieving the newly created post
-    return {'post': newpost}
 
 
 @app.put("/posts/update/{id}")
