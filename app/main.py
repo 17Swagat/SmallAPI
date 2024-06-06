@@ -64,6 +64,26 @@ def get_post(db: Session = Depends(get_db)):
     posts = db.query(models.Post).all()
     return {"posts": posts}
 
+@app.get("/posts/{id}")
+def get_post(id: int, db: Session = Depends(get_db)):
+    # cursor.execute(query="""SELECT * from posts where post_id = %s""", vars=(id,))
+    # post = cursor.fetchone()
+    # if post is None:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_404_NOT_FOUND,
+    #         detail=f"Post with Id: {id} not found!!",
+    #     )
+    # return {"post": post}
+
+    # Using ORM:
+    post = db.query(models.Post).filter(models.Post.id == id).first()
+    if post is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Post with Id: {id} not found!!",
+        )
+    return {'post': post}
+
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_posts(post: Post, db: Session = Depends(get_db)):
@@ -83,16 +103,7 @@ def create_posts(post: Post, db: Session = Depends(get_db)):
     return {"post": newpost}
 
 
-@app.get("/posts/{id}")
-def get_post(id: int):
-    cursor.execute(query="""SELECT * from posts where post_id = %s""", vars=(id,))
-    post = cursor.fetchone()
-    if post is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Post with Id: {id} not found!!",
-        )
-    return {"post": post}
+
 
 
 @app.delete("/posts/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
