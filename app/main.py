@@ -48,23 +48,26 @@ class Post(BaseModel):
 def root():
     return {"message": "yo homie"}
 
+
 # Testing ORM:
-@app.get('/testing/')
-def test_posts(db: Session = Depends(get_db)): 
+@app.get("/testing/")
+def test_posts(db: Session = Depends(get_db)):
     # performing SQL queries via ORM
     posts = db.query(models.Post).all()
-    return {'data': posts}
+    return {"data": posts}
+
 
 @app.get("/posts")
-def get_post():
-    cursor.execute(query="""SELECT * from posts""")
-    posts = cursor.fetchall()
-    return {"data": posts}
+def get_post(db: Session = Depends(get_db)):
+    # cursor.execute(query="""SELECT * from posts""")
+    # posts = cursor.fetchall()
+    posts = db.query(models.Post).all()
+    return {"posts": posts}
 
 
 @app.get("/posts/{id}")
 def get_post(id: int):
-    cursor.execute(query="""SELECT * from posts where id = %s""", vars=(id,))
+    cursor.execute(query="""SELECT * from posts where post_id = %s""", vars=(id,))
     post = cursor.fetchone()
     if post is None:
         raise HTTPException(
@@ -89,14 +92,23 @@ def delete_post(id: int):
 
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_posts(post: Post):
-    cursor.execute(
-        query="""insert into posts(title, content, published) values (%s, %s, %s) returning *""",
-        vars=(post.title, post.content, post.published),
+def create_posts(post: Post, db: Session = Depends(get_db)):
+    # cursor.execute(
+    #     query="""insert into posts(title, content, published) values (%s, %s, %s) returning *""",
+    #     vars=(post.title, post.content, post.published),
+    # )
+    # newpost = cursor.fetchone()
+    # connnection.commit()
+    # return {"post": newpost}
+    # Using ORM:
+    # db.query(models.Post).add
+    newpost = models.Post(
+        title=post.title, content=post.content, published=post.published
     )
-    newpost = cursor.fetchone()
-    connnection.commit()
-    return {"post": newpost}
+    db.add(newpost)
+    db.commit()
+    db.refresh(newpost) # retrieving the newly created post
+    return {'post': newpost}
 
 
 @app.put("/posts/update/{id}")
