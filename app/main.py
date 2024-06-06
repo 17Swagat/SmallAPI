@@ -8,18 +8,16 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 
+# SQLAlchemy:
 from . import models
 from .database import engine, SessionLocal
-
-# SQLAlchemy:
 from sqlalchemy.orm import Session
-
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-
 # Dependency
+# Function helps to get a connection to our Database
 def get_db():
     db = SessionLocal()
     try:
@@ -59,7 +57,10 @@ def root():
 
 # Testing ORM:
 @app.get('/testing/')
-def test_posts(db: Session = Depends(get_db)):
+def test_posts(db: Session = Depends(get_db)): 
+    # Session: From SQLAlchemy
+    # Depends: From FastAPI
+    # get_db: custom implemented function
     return {'status': 'success'}
 
 @app.get("/posts")
