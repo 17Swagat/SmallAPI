@@ -10,21 +10,15 @@ import time
 
 # SQLAlchemy:
 from . import models
-from .database import engine, SessionLocal
+from .database import engine, get_db
 from sqlalchemy.orm import Session
+
+# create the database tables based on the SQLAlchemy models defined in your models module.
+# &
+# Does not alter existing tables or delete existing data. It only creates tables that do not already exist in the database. If a table already exists, create_all will skip creating that table and leave the existing table and its data unchanged.
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-
-# Dependency
-# Function helps to get a connection to our Database
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 while True:
     try:
@@ -60,7 +54,7 @@ def root():
 def test_posts(db: Session = Depends(get_db)): 
     # Session: From SQLAlchemy
     # Depends: From FastAPI
-    # get_db: custom implemented function
+    # get_db: custom implemented function {from `database.py`}
     return {'status': 'success'}
 
 @app.get("/posts")
