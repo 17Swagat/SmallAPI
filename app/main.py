@@ -51,10 +51,9 @@ def root():
 # Testing ORM:
 @app.get('/testing/')
 def test_posts(db: Session = Depends(get_db)): 
-    # Session: From SQLAlchemy
-    # Depends: From FastAPI
-    # get_db: custom implemented function {from `database.py`}
-    return {'status': 'success'}
+    # performing SQL queries via ORM
+    posts = db.query(models.Post).all()
+    return {'data': posts}
 
 @app.get("/posts")
 def get_post():
