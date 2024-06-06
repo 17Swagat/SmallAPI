@@ -13,9 +13,8 @@ from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
 
-# create the database tables based on the SQLAlchemy models defined in your models module.
-# &
-# Does not alter existing tables or delete existing data. It only creates tables that do not already exist in the database. If a table already exists, create_all will skip creating that table and leave the existing table and its data unchanged.
+# * create the database tables based on the SQLAlchemy models defined in your models module.
+# * Does not alter existing tables or delete existing data. It only creates tables that do not already exist in the database. If a table already exists, create_all will skip creating that table and leave the existing table and its data unchanged.
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
