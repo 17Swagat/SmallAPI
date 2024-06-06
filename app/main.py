@@ -48,15 +48,6 @@ class Post(BaseModel):
 def root():
     return {"message": "yo homie"}
 
-
-# Testing ORM:
-@app.get("/testing/")
-def test_posts(db: Session = Depends(get_db)):
-    # performing SQL queries via ORM
-    posts = db.query(models.Post).all()
-    return {"data": posts}
-
-
 @app.get("/posts")
 def get_post(db: Session = Depends(get_db)):
     # cursor.execute(query="""SELECT * from posts""")
@@ -156,4 +147,4 @@ def update_post(id: int, updated_post: Post, db: Session = Depends(get_db)):
         synchronize_session=False,
     )
     db.commit()
-    return {'post': post_query.first()}
+    return {"post": post_query.first()}
