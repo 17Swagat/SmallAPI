@@ -8,24 +8,24 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 
-from . import models
-from .database import engine, SessionLocal
+# from . import models
+# from .database import engine, SessionLocal
 
 # SQLAlchemy:
-from sqlalchemy.orm import Session
+# from sqlalchemy.orm import Session
 
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 
 # Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# def get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
 
 
 while True:
@@ -58,9 +58,9 @@ def root():
     return {"message": "yo homie"}
 
 # Testing ORM:
-@app.get('/testing/')
-def test_posts(db: Session = Depends(get_db)):
-    return {'status': 'success'}
+# @app.get('/testing/')
+# def test_posts(db: Session = Depends(get_db)):
+#     return {'status': 'success'}
 
 @app.get("/posts")
 def get_post():
