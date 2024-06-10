@@ -19,5 +19,5 @@ class User(Base):
     
     id = Column("user_id", Integer, primary_key=True, nullable=False)
     email = Column(name='email',type_=String(50), nullable=False, unique=True)
-    password = Column(name='password',type_=String(50), nullable=False)
+    password = Column(name='password',type_=String, nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable = False, server_default=text('NOW()'))

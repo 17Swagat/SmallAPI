@@ -1,9 +1,10 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-
 # from typing import Optional
 
 
+# POST:
+##################################
 # Request(s):=>
 class PostBase(BaseModel):
     title: str
@@ -15,6 +16,7 @@ class PostBase(BaseModel):
 class PostCreate(PostBase):
     pass
 
+
 # Response:=>
 class Post(PostBase):
     id: int
@@ -23,10 +25,14 @@ class Post(PostBase):
         # orm_mode = True # depreceated:
         from_attributes = True
 
+
+# USER:
+##################################
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
 
+# Response:=>
 class UserOut(BaseModel):
     id: int
     email: EmailStr

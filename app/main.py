@@ -4,6 +4,9 @@ from typing import List
 # from .schemas import Post
 from . import schemas
 
+# utils:
+from . import utils
+
 # PostgreSQL DB adapter
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -14,6 +17,8 @@ from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
 
+
+# sqlAlchemy stuff:
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -101,6 +106,13 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
 
 @app.post('/users', status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate,db:Session=Depends(get_db)):
+
+    # hashing the pswd:
+    # hashed_pswd = pwd_context.hash(secret=user.password)
+    # user.password = hashed_pswd
+    user.password = utils.hash_pswd(user.password)
+    
+    # saving to DB:
     new_user = models.User(**user.model_dump())
     db.add(new_user)
     db.commit()
