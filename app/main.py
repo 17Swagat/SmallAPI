@@ -14,8 +14,6 @@ from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
 
-# * create the database tables based on the SQLAlchemy models defined in your models module.
-# * Does not alter existing tables or delete existing data. It only creates tables that do not already exist in the database. If a table already exists, create_all will skip creating that table and leave the existing table and its data unchanged.
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -44,23 +42,13 @@ def root():
 
 @app.get("/posts", response_model=List[schemas.Post])
 def get_post(db: Session = Depends(get_db)):
-    # cursor.execute(query="""SELECT * from posts""")
-    # posts = cursor.fetchall()
+    # Using ORM:
     posts = db.query(models.Post).all()
     return posts
 
 
 @app.get("/posts/{id}", response_model=schemas.Post)
 def get_post(id: int, db: Session = Depends(get_db)):
-    # cursor.execute(query="""SELECT * from posts where post_id = %s""", vars=(id,))
-    # post = cursor.fetchone()
-    # if post is None:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail=f"Post with Id: {id} not found!!",
-    #     )
-    # return {"post": post}
-
     # Using ORM:
     post = db.query(models.Post).filter(models.Post.id == id).first()
     if post is None:
@@ -73,17 +61,6 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
 @app.delete("/posts/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, db: Session = Depends(get_db)):
-    # cursor.execute(query=""" select * from posts where id = %s""", vars=(id,))
-    # post = cursor.fetchone()
-    # # if post not available:
-    # if post is None:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND, detail=f"Post not found= id:{id}"
-    #     )
-    # # if post available:
-    # cursor.execute(query=""" delete from posts where id = %s returning *""", vars=(id,))
-    # deleted_post = cursor.fetchone()
-
     # Using ORM:
     post = db.query(models.Post).filter(models.Post.id == id)
     if post.first() is None:
@@ -96,14 +73,6 @@ def delete_post(id: int, db: Session = Depends(get_db)):
 
 @app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
 def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
-    # cursor.execute(
-    #     query="""insert into posts(title, content, published) values (%s, %s, %s) returning *""",
-    #     vars=(post.title, post.content, post.published),
-    # )
-    # newpost = cursor.fetchone()
-    # connnection.commit()
-    # return {"post": newpost}
-
     # Using ORM:
     newpost = models.Post(**post.model_dump())
     db.add(newpost)
@@ -114,20 +83,6 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
 
 @app.put("/posts/update/{id}", response_model=schemas.Post)
 def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
-    # cursor.execute(
-    #     # update posts set title = title, content = content where id = id
-    #     query=""" update posts set title = %s, content = %s, published = %s where id = %s returning *""",
-    #     vars=(updated_post.title, updated_post.content, updated_post.published, id),
-    # )
-    # post = cursor.fetchone()
-    # if post is None:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail=f"Post not found with id: {id}",
-    #     )
-    # connnection.commit()
-    # return {"updated_post": post}
-
     # Using ORM:
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
@@ -142,3 +97,12 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
     )
     db.commit()
     return post_query.first() #{"post": post_query.first()}
+
+
+@app.post('/users', status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
+def create_user(user: schemas.UserCreate,db:Session=Depends(get_db)):
+    new_user = models.User(**user.model_dump())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
