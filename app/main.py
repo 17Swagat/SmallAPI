@@ -1,5 +1,4 @@
-from fastapi import Body, FastAPI, Response, status, HTTPException, Depends
-from typing import List
+from fastapi import Body, FastAPI #,Response, status, HTTPException, Depends
 
 # from .schemas import Post
 from . import schemas
@@ -16,13 +15,14 @@ import time
 from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
-
+from .routers import post, user
 
 # sqlAlchemy stuff:
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+# DB stuff(psycopg2):
 while True:
     try:
         connnection = psycopg2.connect(
@@ -40,96 +40,10 @@ while True:
         print(f"Error: {error}\n")
         time.sleep(3)
 
+# routes import:
+app.include_router(router=post.router)
+app.include_router(router=user.router)
 
 @app.get("/")
 def root():
     return {"message": "yo homie"}
-
-@app.get("/posts", response_model=List[schemas.Post])
-def get_post(db: Session = Depends(get_db)):
-    # Using ORM:
-    posts = db.query(models.Post).all()
-    return posts
-
-
-@app.get("/posts/{id}", response_model=schemas.Post)
-def get_post(id: int, db: Session = Depends(get_db)):
-    # Using ORM:
-    post = db.query(models.Post).filter(models.Post.id == id).first()
-    if post is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Post with Id: {id} not found!!",
-        )
-    return post #{"post": post}
-
-
-@app.delete("/posts/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db)):
-    # Using ORM:
-    post = db.query(models.Post).filter(models.Post.id == id)
-    if post.first() is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"Post not found= id:{id}"
-        )
-    post.delete(synchronize_session=False)
-    db.commit()
-
-
-@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
-def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db)):
-    # Using ORM:
-    newpost = models.Post(**post.model_dump())
-    db.add(newpost)
-    db.commit()
-    db.refresh(newpost)  # retrieving the newly created post
-    return newpost #{"post": newpost}
-
-
-@app.put("/posts/update/{id}", response_model=schemas.Post)
-def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db)):
-    # Using ORM:
-    post_query = db.query(models.Post).filter(models.Post.id == id)
-    post = post_query.first()
-    if post is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Post not found with id: {id}",
-        )
-    post_query.update(
-        updated_post.model_dump(),
-        synchronize_session=False,
-    )
-    db.commit()
-    return post_query.first() #{"post": post_query.first()}
-
-
-@app.post('/users', status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
-def create_user(user: schemas.UserCreate,db:Session=Depends(get_db)):
-    # hashing the pswd:
-    user.password = utils.hash_str(user.password)
-    
-    # saving to DB:
-    new_user = models.User(**user.model_dump())
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return new_user
-
-@app.get('/users/{id}', response_model=schemas.UserOut)
-def get_user(id: int, db:Session=Depends(get_db)):
-    user = db.query(models.User).filter(models.User.id == id).first()
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Post with Id: {id} not found!!")
-    return user
-
-
-@app.get('/users', response_model=List[schemas.UserOut])
-def get_all_users(db:Session=Depends(get_db)):
-    ''' Its better to not use this function, if no. of users are to many. [Or] 
-     [@LATER]: Could set a limit: To how many users will be prompted each no. 
-      of times. '''
-    users = db.query(models.User).all()
-    return users
