@@ -5,8 +5,7 @@ from passlib.context import CryptContext # For: PswdHashing
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated="auto") 
 
 
-
-# hash-pswd function:
-def hash_pswd(pswd: str):
+# hash-string function:
+def hash_str(pswd: str):
     hashed_pswd = pwd_context.hash(secret=pswd)
     return hashed_pswd
