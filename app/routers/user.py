@@ -4,9 +4,12 @@ from typing import List
 from .. import utils, schemas, models
 from ..database import get_db
 
-router = APIRouter()
+router = APIRouter(
+    prefix= '/user',
+    tags=['Users']
+)
 
-@router.post('/users', status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 def create_user(user: schemas.UserCreate,db:Session=Depends(get_db)):
     # hashing the pswd:
     user.password = utils.hash_str(user.password)
@@ -19,7 +22,7 @@ def create_user(user: schemas.UserCreate,db:Session=Depends(get_db)):
     return new_user
 
 
-@router.get('/users/{id}', response_model=schemas.UserOut)
+@router.get('/{id}', response_model=schemas.UserOut)
 def get_user(id: int, db:Session=Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
     if user is None:
@@ -29,7 +32,7 @@ def get_user(id: int, db:Session=Depends(get_db)):
     return user
 
 
-@router.get('/users', response_model=List[schemas.UserOut])
+@router.get('/', response_model=List[schemas.UserOut])
 def get_all_users(db:Session=Depends(get_db)):
     ''' Its better to not use this function, if no. of users are to many. [Or] 
      [@LATER]: Could set a limit: To how many users will be prompted each no. 
