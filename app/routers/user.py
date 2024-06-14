@@ -22,6 +22,14 @@ def create_user(user: schemas.UserCreate,db:Session=Depends(get_db)):
     return new_user
 
 
+@router.get('/', response_model=List[schemas.UserOut])
+def get_all_users(db:Session=Depends(get_db)):
+    ''' Its better to not use this function, if no. of users are to many. [Or] 
+     [@LATER]: Could set a limit: To how many users will be prompted each no. 
+      of times. '''
+    users = db.query(models.User).all()
+    return users
+
 @router.get('/{id}', response_model=schemas.UserOut)
 def get_user(id: int, db:Session=Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
@@ -31,11 +39,3 @@ def get_user(id: int, db:Session=Depends(get_db)):
             detail=f"Post with Id: {id} not found!!")
     return user
 
-
-@router.get('/', response_model=List[schemas.UserOut])
-def get_all_users(db:Session=Depends(get_db)):
-    ''' Its better to not use this function, if no. of users are to many. [Or] 
-     [@LATER]: Could set a limit: To how many users will be prompted each no. 
-      of times. '''
-    users = db.query(models.User).all()
-    return users

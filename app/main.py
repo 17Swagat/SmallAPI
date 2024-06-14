@@ -15,7 +15,9 @@ import time
 from . import models
 from .database import engine, get_db
 from sqlalchemy.orm import Session
-from .routers import post, user
+
+# routes:
+from .routers import post, user, auth
 
 # sqlAlchemy stuff:
 models.Base.metadata.create_all(bind=engine)
@@ -43,6 +45,7 @@ while True:
 # routes import:
 app.include_router(router=post.router)
 app.include_router(router=user.router)
+app.include_router(router=auth.router)
 
 @app.get("/")
 def root():

@@ -1,6 +1,6 @@
 select * from posts;
 
-select * from posts order by id;
+select * from posts order by post_id;
 
 INSERT INTO posts (title, content, published, created_at) 
 VALUES 
