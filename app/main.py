@@ -1,20 +1,16 @@
-from fastapi import Body, FastAPI #,Response, status, HTTPException, Depends
+# system:
+import time
 
-# from .schemas import Post
-from . import schemas
-
-# utils:
-from . import utils
+# FastAPI:
+from fastapi import FastAPI 
 
 # PostgreSQL DB adapter
 import psycopg2
 from psycopg2.extras import RealDictCursor
-import time
 
 # SQLAlchemy:
 from . import models
-from .database import engine, get_db
-from sqlalchemy.orm import Session
+from .database import engine
 
 # routes:
 from .routers import post, user, auth

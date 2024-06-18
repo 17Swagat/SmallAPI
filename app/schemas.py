@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 from datetime import datetime
-# from typing import Optional
 
 
 # POST:
@@ -34,7 +34,7 @@ class UserCreate(BaseModel):
 
 # Response:=>
 class UserOut(BaseModel):
-    id: int
+    id: int  
     email: EmailStr
     created_at: datetime
     class Config:
@@ -44,3 +44,13 @@ class UserOut(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
+    # id: Optional[int] = None
