@@ -1,3 +1,6 @@
+# DEBUG:
+import uvicorn
+
 # system:
 import time
 
@@ -46,3 +49,10 @@ app.include_router(router=auth.router)
 @app.get("/")
 def root():
     return {"message": "yo homie"}
+
+
+
+# For debugging with breakpoints in VS-Code
+if __name__ == '__main__':
+
+    uvicorn.run(app=app, host='0.0.0.0', port=8000)
