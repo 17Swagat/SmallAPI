@@ -30,6 +30,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
     return post #{"post": post}
 
 
+
 @router.delete("/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int, 
                 db: Session = Depends(get_db),
@@ -46,13 +47,15 @@ def delete_post(id: int,
     post_ = post.first()
     if post_.creator_id != current_user.id:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, 
+            status_code=status.HTTP_403_FORBIDDEN, 
             detail=f"Post:{id} doesn't belong to user:{current_user.id} "
         )
 
 
     post.delete(synchronize_session=False)
     db.commit()
+
+
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.Post)
@@ -76,6 +79,8 @@ def create_post(post: schemas.PostCreate,
     return newpost
 
 
+
+
 @router.put("/update/{id}", response_model=schemas.Post)
 def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends(get_db),
                 current_user:int = Depends(oauth2.get_current_user)):
@@ -87,6 +92,13 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Post not found with id: {id}",
         )
+    
+    if post.creator_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail=f"Post:{id} doesn't belong to user:{current_user.id} "
+        )
+
     post_query.update(
         updated_post.model_dump(),
         synchronize_session=False,
