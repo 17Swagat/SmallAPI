@@ -16,7 +16,10 @@ delete from posts;
 
 delete from posts where post_id > 10;
 
-
+INSERT INTO posts (post_title, post_content, creator_id) 
+VALUES 
+	('third post', 'post 3 content', 10)
+RETURNING *;
 
 
 

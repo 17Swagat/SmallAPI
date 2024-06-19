@@ -17,10 +17,11 @@ class PostCreate(PostBase):
     pass
 
 
-# Response:=>
+# Response:=> PostOut
 class Post(PostBase):
     id: int
     created_at: datetime
+    creator_id: int 
     class Config:
         # orm_mode = True # depreceated:
         from_attributes = True

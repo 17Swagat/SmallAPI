@@ -57,7 +57,8 @@ def create_post(post: schemas.PostCreate,
     # print('\n')
 
     # Using ORM:
-    newpost = models.Post(**post.model_dump())
+    newpost = models.Post(creator_id=current_user.id,
+                          **post.model_dump())
     db.add(newpost)
     db.commit()
     db.refresh(newpost)  

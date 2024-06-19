@@ -5,7 +5,7 @@ select * from users order by user_id;
 
 INSERT INTO users (email, password) --(title, content, published, created_at) 
 VALUES 
-	('jonny@gmail.com', '$2b$12$ZD7Vvpeda2rxsOrwiOYLNeK7UfXzs1xkbAxKAERF5VZ.X8TGeLnye'),
+	('manny@gmail.com', '$2b$12$xlsJDgir50/KKkKLyd5OK.MSPYSe0nC1/wmRb6xxbhi46SumbGOJq'),
 	('andy@gmail.com', '$2b$12$.mDeWnNtR6yqIPUlfPGBMupiNDFK7X2VKmrmNehx1mXLzQkXBH2ya')
 
 RETURNING *;
