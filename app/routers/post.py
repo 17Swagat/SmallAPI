@@ -1,6 +1,7 @@
 from fastapi import status, HTTPException, Depends, APIRouter
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 from .. import utils, schemas, models, oauth2
 from ..database import get_db
 
@@ -13,7 +14,8 @@ router = APIRouter(
 
 @router.get("/allposts", response_model=List[schemas.Post])
 def get_post(db: Session = Depends(get_db),
-             limit: int = 10, skip: int = 0):
+             limit: int = 10, skip: int = 0, 
+             search: Optional[str] = ''):
     '''
     Get all the posts by all users.
     '''
@@ -21,7 +23,8 @@ def get_post(db: Session = Depends(get_db),
     # Using ORM:
     print(limit)
     # posts = db.query(models.Post).all()
-    posts_query = db.query(models.Post).limit(limit=limit).offset(skip)
+    posts_query = db.query(models.Post).filter(or_(models.Post.title.contains(search),
+                                                   models.Post.content.contains(search))).limit(limit=limit).offset(skip)
     posts = posts_query.all()
 
     return posts
