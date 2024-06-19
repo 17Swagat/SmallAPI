@@ -3,30 +3,7 @@ from typing import Optional
 from datetime import datetime
 
 
-# POST:
 ##################################
-# Request(s):=>
-class PostBase(BaseModel):
-    title: str
-    content: str
-    published: bool = False
-    # rating: Optional[int] = 15
-
-
-class PostCreate(PostBase):
-    pass
-
-
-# Response:=> PostOut
-class Post(PostBase):
-    id: int
-    created_at: datetime
-    creator_id: int 
-    class Config:
-        # orm_mode = True # depreceated:
-        from_attributes = True
-
-
 # USER:
 ##################################
 class UserCreate(BaseModel):
@@ -55,3 +32,39 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     id: Optional[str] = None
     # id: Optional[int] = None
+
+##################################
+# POST:
+##################################
+# Request(s):=>
+class PostBase(BaseModel):
+    title: str
+    content: str
+    published: bool = False
+    # rating: Optional[int] = 15
+
+
+class PostCreate(PostBase):
+    pass
+
+
+# Response:=> PostOut
+class Post(PostBase):
+    '''use it: in case when all posts by all the users are in one place'''
+    id: int
+    created_at: datetime
+    creator_id: int 
+    owner: UserOut
+    class Config:
+        # orm_mode = True # depreceated:
+        from_attributes = True
+
+
+class Post_CurrentUser(PostBase):
+    '''use it: when we need all the posts by current_user'''
+    id: int
+    created_at: datetime
+    creator_id: int # not necessary to include it TBH [coz: Its for the current user]
+    class Config:
+        # orm_mode = True # depreceated:
+        from_attributes = True

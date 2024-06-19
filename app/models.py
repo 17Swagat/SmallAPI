@@ -2,6 +2,7 @@ from app.database import Base
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from sqlalchemy.sql.expression import text
+from sqlalchemy.orm import relationship
 
 
 class Post(Base):  
@@ -13,6 +14,8 @@ class Post(Base):
     published = Column("post_published", Boolean, server_default='FALSE', nullable=False)
     created_at = Column(TIMESTAMP(timezone=True), nullable = False, server_default=text('NOW()'))
     creator_id = Column(Integer, ForeignKey(column='users.user_id', ondelete='CASCADE'), nullable=False)
+
+    owner = relationship('User')
 
 
 class User(Base):

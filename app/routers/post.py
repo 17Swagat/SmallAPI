@@ -30,13 +30,21 @@ def get_post(db: Session = Depends(get_db)):
 #     return post #{"post": post}
 
 
-@router.get('/', response_model=List[schemas.Post])
+@router.get('/' , response_model=List[schemas.Post_CurrentUser])
 def get_all_posts_by_currentUser(current_user: int = Depends(oauth2.get_current_user),
                                  db: Session = Depends(get_db)):
     
     post_query = db.query(models.Post).filter(models.Post.creator_id == current_user.id)
     posts = post_query.all()
     return posts
+
+    # 2
+    # Convert to Pydantic models and then to dictionaries
+    # posts_dict = [schemas.Post_CurrentUser.model_validate(post).model_dump() for post in posts]
+    # Example modification: add a new field
+    # for post_dict in posts_dict:
+    #     post_dict.pop('')
+    # return posts_dict
 
 
 
