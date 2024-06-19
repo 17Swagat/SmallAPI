@@ -11,23 +11,32 @@ router = APIRouter(
 
 
 
-@router.get("/", response_model=List[schemas.Post])
+@router.get("/allposts", response_model=List[schemas.Post])
 def get_post(db: Session = Depends(get_db)):
     # Using ORM:
     posts = db.query(models.Post).all()
     return posts
 
 
-@router.get("/{id}", response_model=schemas.Post)
-def get_post(id: int, db: Session = Depends(get_db)):
-    # Using ORM:
-    post = db.query(models.Post).filter(models.Post.id == id).first()
-    if post is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Post with Id: {id} not found!!",
-        )
-    return post #{"post": post}
+# @router.get("/{id}", response_model=schemas.Post)
+# def get_post_by_postID(post_id: int, db: Session = Depends(get_db)):
+#     # Using ORM:
+#     post = db.query(models.Post).filter(models.Post.id == post_id).first()
+#     if post is None:
+#         raise HTTPException(
+#             status_code=status.HTTP_404_NOT_FOUND,
+#             detail=f"Post with Id: {id} not found!!",
+#         )
+#     return post #{"post": post}
+
+
+@router.get('/', response_model=List[schemas.Post])
+def get_all_posts_by_currentUser(current_user: int = Depends(oauth2.get_current_user),
+                                 db: Session = Depends(get_db)):
+    
+    post_query = db.query(models.Post).filter(models.Post.creator_id == current_user.id)
+    posts = post_query.all()
+    return posts
 
 
 
@@ -36,23 +45,22 @@ def delete_post(id: int,
                 db: Session = Depends(get_db),
                 current_user:int = Depends(oauth2.get_current_user)):
     # Using ORM:
-    post = db.query(models.Post).filter(models.Post.id == id)
+    post_query = db.query(models.Post).filter(models.Post.id == id)
+    post = post_query.first()
 
-
-    if post.first() is None:
+    if post is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Post not found= id:{id}"
         )
 
-    post_ = post.first()
-    if post_.creator_id != current_user.id:
+    if post.creator_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, 
             detail=f"Post:{id} doesn't belong to user:{current_user.id} "
         )
 
 
-    post.delete(synchronize_session=False)
+    post_query.delete(synchronize_session=False)
     db.commit()
 
 
@@ -87,6 +95,7 @@ def update_post(id: int, updated_post: schemas.PostCreate, db: Session = Depends
     # Using ORM:
     post_query = db.query(models.Post).filter(models.Post.id == id)
     post = post_query.first()
+    
     if post is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
