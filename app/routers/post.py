@@ -36,10 +36,21 @@ def delete_post(id: int,
                 current_user:int = Depends(oauth2.get_current_user)):
     # Using ORM:
     post = db.query(models.Post).filter(models.Post.id == id)
+
+
     if post.first() is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=f"Post not found= id:{id}"
         )
+
+    post_ = post.first()
+    if post_.creator_id != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail=f"Post:{id} doesn't belong to user:{current_user.id} "
+        )
+
+
     post.delete(synchronize_session=False)
     db.commit()
 
