@@ -64,7 +64,7 @@ class Post_CurrentUser(PostBase):
     '''use it: when we need all the posts by current_user'''
     id: int
     created_at: datetime
-    creator_id: int # not necessary to include it TBH [coz: Its for the current user]
+    # creator_id: int # not necessary to include it TBH [coz: Its for the current user]
     class Config:
         # orm_mode = True # depreceated:
         from_attributes = True
