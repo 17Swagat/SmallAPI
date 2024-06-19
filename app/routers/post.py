@@ -31,7 +31,8 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/delete/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(get_db),
+def delete_post(id: int, 
+                db: Session = Depends(get_db),
                 current_user:int = Depends(oauth2.get_current_user)):
     # Using ORM:
     post = db.query(models.Post).filter(models.Post.id == id)

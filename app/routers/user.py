@@ -9,8 +9,11 @@ router = APIRouter(
     tags=['Users']
 )
 
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
-def create_user(user: schemas.UserCreate,db:Session=Depends(get_db)):
+@router.post('/', 
+             status_code=status.HTTP_201_CREATED, 
+             response_model=schemas.UserOut)
+def create_user(user: schemas.UserCreate,
+                db:Session=Depends(get_db)):
     # hashing the pswd:
     user.password = utils.hash_str(user.password)
     
@@ -25,15 +28,18 @@ def create_user(user: schemas.UserCreate,db:Session=Depends(get_db)):
 
 @router.get('/', response_model=List[schemas.UserOut])
 def get_all_users(db:Session=Depends(get_db)):
-    ''' Its better to not use this function, if no. of users are to many. [Or] 
+    ''' 
+    Its better to not use this function, if no. of users are to many. [Or] 
      [@LATER]: Could set a limit: To how many users will be prompted each no. 
-      of times. '''
+      of times.
+    '''
     users = db.query(models.User).all()
     return users
 
 
 @router.get('/{id}', response_model=schemas.UserOut)
-def get_user(id: int, db:Session=Depends(get_db)):
+def get_user(id: int, 
+             db:Session=Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
     if user is None:
         raise HTTPException(
