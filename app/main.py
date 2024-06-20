@@ -11,7 +11,7 @@ from .database import engine
 models.Base.metadata.create_all(bind=engine)
 
 # routes:
-from .routers import post, user, auth
+from .routers import post, user, auth, vote
 
 
 app = FastAPI()
@@ -21,6 +21,7 @@ app = FastAPI()
 app.include_router(router=post.router)
 app.include_router(router=user.router)
 app.include_router(router=auth.router)
+app.include_router(router=vote.router)
 
 
 @app.get("/")

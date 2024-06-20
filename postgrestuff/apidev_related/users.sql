@@ -14,5 +14,5 @@ RETURNING *;
 delete from users where user_id = 8;
 
 
--- show PORT;
+show PORT;
 -- ALTER SYSTEM SET port = '5433'; -- didn't work!!

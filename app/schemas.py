@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr
-from typing import Optional
+from pydantic import BaseModel, EmailStr, Field
+from typing import Annotated, Optional
 from datetime import datetime
 
 
@@ -33,6 +33,7 @@ class TokenData(BaseModel):
     id: Optional[str] = None
     # id: Optional[int] = None
 
+
 ##################################
 # POST:
 ##################################
@@ -64,7 +65,16 @@ class Post_CurrentUser(PostBase):
     '''use it: when we need all the posts by current_user'''
     id: int
     created_at: datetime
-    # creator_id: int # not necessary to include it TBH [coz: Its for the current user]
+    creator_id: int # not necessary to include it TBH [coz: Its for the current user]
     class Config:
         # orm_mode = True # depreceated:
         from_attributes = True
+    
+
+
+##################################
+# VOTE:
+##################################
+class Vote(BaseModel):
+    post_id: int
+    dir: Annotated[int, Field(ge=0, le=1)]
